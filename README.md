@@ -8,10 +8,8 @@ personal watchlist, and get a live alert when a watched property's price or stat
 
 ## Notes for reviewers
 
-> **TODO before submitting:** fill in the two lines below, then delete this note.
-
-- **Time spent:** _TODO: hours spent, and what you would cut to fit the 3–4 hour guide._
-- **AI assistance:** _TODO: what AI tools were used for, in line with Landchecker's guidance._
+- **Time spent:** : 3.5h._
+- **AI assistance:**: Claude._
 - **Where to start reading:** [`PropertySearch`](backend/app/services/property_search.rb) (filters,
   indexes, cursor pagination), [`PropertiesController`](backend/app/controllers/api/v1/properties_controller.rb)
   (caching), [`useSearchFilters`](frontend/src/hooks/useSearchFilters.ts) and
