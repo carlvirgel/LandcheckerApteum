@@ -1,0 +1,14 @@
+#!/bin/bash -e
+
+# Keep gems in sync with the (bind-mounted) Gemfile.lock without rebuilding the image
+bundle check >/dev/null 2>&1 || bundle install
+
+rm -f tmp/pids/server.pid
+
+# Create + migrate the database when booting the web server.
+# db:prepare also runs db/seeds.rb when it creates the database.
+if [ "$1" == "./bin/rails" ] && [ "$2" == "server" ]; then
+  ./bin/rails db:prepare
+fi
+
+exec "${@}"

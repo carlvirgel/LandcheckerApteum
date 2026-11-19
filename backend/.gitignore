@@ -1,0 +1,16 @@
+/.bundle
+/.env*
+!/.env.example
+
+/log/*
+/tmp/*
+!/log/.keep
+!/tmp/.keep
+/tmp/pids/*
+!/tmp/pids/.keep
+/storage/*
+!/storage/.keep
+
+# Never commit the credentials key
+/config/master.key
+/config/credentials/*.key

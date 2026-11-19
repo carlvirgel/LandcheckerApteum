@@ -1,0 +1,35 @@
+source "https://rubygems.org"
+
+gem "rails", "~> 8.1.4", ">= 8.1.4.1"
+gem "pg", "~> 1.1"
+gem "puma", ">= 5.0"
+
+# Redis backs ActionCable pub/sub, the Rails cache and the rate limiter store
+gem "redis", ">= 5.0"
+
+# Authentication: has_secure_password + stateless JWTs for the SPA and ActionCable
+gem "bcrypt", "~> 3.1.7"
+gem "jwt", ">= 2.10"
+
+gem "rack-cors"
+
+# Windows does not include zoneinfo files, so bundle the tzinfo-data gem
+gem "tzinfo-data", platforms: %i[ windows jruby ]
+
+# Reduces boot times through caching; required in config/boot.rb
+gem "bootsnap", require: false
+
+group :development, :test do
+  gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
+  gem "bundler-audit", require: false
+  gem "brakeman", require: false
+  gem "rubocop-rails-omakase", require: false
+
+  gem "rspec-rails", "~> 8.0"
+  gem "factory_bot_rails"
+  gem "faker"
+end
+
+group :test do
+  gem "shoulda-matchers", "~> 6.0"
+end
