@@ -1,0 +1,62 @@
+# Production-like stack: Rails production image (backend/Dockerfile) behind the
+# nginx frontend image. Run with:
+#   SECRET_KEY_BASE=$(openssl rand -hex 64) docker compose -f docker-compose.prod.yml up --build
+# then open http://localhost:8080
+name: landchecker-prod
+
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+  redis:
+    image: redis:7-alpine
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+  api:
+    build: ./backend
+    environment:
+      RAILS_ENV: production
+      SECRET_KEY_BASE: ${SECRET_KEY_BASE:?Set SECRET_KEY_BASE (e.g. openssl rand -hex 64)}
+      DATABASE_URL: postgres://postgres:${POSTGRES_PASSWORD:-postgres}@db:5432/landchecker_production
+      REDIS_URL: redis://redis:6379/0
+      CORS_ORIGINS: http://localhost:8080
+      # TLS terminates in front of nginx in a real deployment
+      FORCE_SSL: "false"
+      ASSUME_SSL: "false"
+      RAILS_LOG_LEVEL: info
+      WEB_CONCURRENCY: 2
+    healthcheck:
+      test: ["CMD", "curl", "-fs", "http://localhost:3000/up"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  web:
+    build: ./frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      api:
+        condition: service_healthy
+
+volumes:
+  pg_data:
